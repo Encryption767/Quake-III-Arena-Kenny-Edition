@@ -94,7 +94,7 @@ LClampHigh2:
 LClampDone2:
  shl edx,16
  and eax,0FFFFh
- or edx,eax
+ orient edx,eax
  mov ds:dword ptr[-4+edi+ecx*2],edx
  sub ecx,2
  jnz LWLBLoopTop

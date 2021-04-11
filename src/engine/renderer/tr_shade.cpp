@@ -620,7 +620,7 @@ static void ComputeColors( shaderStage_t *pStage )
 				float len;
 				vec3_t v;
 
-				VectorSubtract( tess.xyz[i], backEnd.viewParms.or.origin, v );
+				VectorSubtract( tess.xyz[i], backEnd.viewParms.orient.origin, v );
 				len = VectorLength( v );
 
 				len /= tess.shader->portalRange;
@@ -951,7 +951,7 @@ void RB_StageIteratorGeneric( void )
 	// 
 	// now do any dynamic lighting needed
 	//
-	if ( tess.dlightBits && tess.shader->sort <= SS_OPAQUE
+	if ( tess.dlightBits && static_cast<int>(tess.shader->sort) <= SS_OPAQUE
 		&& !(tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY) ) ) {
 		ProjectDlightTexture();
 	}

@@ -17,79 +17,79 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\engine\renderer\tr_animation.c">
+    <ClCompile Include="..\src\engine\renderer\tr_animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_backend.c">
+    <ClCompile Include="..\src\engine\renderer\tr_backend.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_bsp.c">
+    <ClCompile Include="..\src\engine\renderer\tr_bsp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_cmds.c">
+    <ClCompile Include="..\src\engine\renderer\tr_cmds.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_curve.c">
+    <ClCompile Include="..\src\engine\renderer\tr_curve.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_font.c">
+    <ClCompile Include="..\src\engine\renderer\tr_font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_image.c">
+    <ClCompile Include="..\src\engine\renderer\tr_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_init.c">
+    <ClCompile Include="..\src\engine\renderer\tr_init.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_light.c">
+    <ClCompile Include="..\src\engine\renderer\tr_light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_main.c">
+    <ClCompile Include="..\src\engine\renderer\tr_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_marks.c">
+    <ClCompile Include="..\src\engine\renderer\tr_marks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_mesh.c">
+    <ClCompile Include="..\src\engine\renderer\tr_mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_model.c">
+    <ClCompile Include="..\src\engine\renderer\tr_model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_noise.c">
+    <ClCompile Include="..\src\engine\renderer\tr_noise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_scene.c">
+    <ClCompile Include="..\src\engine\renderer\tr_scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_shade.c">
+    <ClCompile Include="..\src\engine\renderer\tr_shade.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_shade_calc.c">
+    <ClCompile Include="..\src\engine\renderer\tr_shade_calc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_shader.c">
+    <ClCompile Include="..\src\engine\renderer\tr_shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_shadows.c">
+    <ClCompile Include="..\src\engine\renderer\tr_shadows.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_sky.c">
+    <ClCompile Include="..\src\engine\renderer\tr_sky.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_surface.c">
+    <ClCompile Include="..\src\engine\renderer\tr_surface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\renderer\tr_world.c">
+    <ClCompile Include="..\src\engine\renderer\tr_world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\platform\win_gamma.c">
+    <ClCompile Include="..\src\engine\platform\win_gamma.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\platform\win_glimp.c">
+    <ClCompile Include="..\src\engine\platform\win_glimp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\engine\platform\win_qgl.c">
+    <ClCompile Include="..\src\engine\platform\win_qgl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\engine\renderer\vk.cpp">

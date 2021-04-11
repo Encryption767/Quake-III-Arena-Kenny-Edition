@@ -162,7 +162,7 @@ static VkFormat get_depth_format(VkPhysicalDevice physical_device) {
 
 static VkSwapchainKHR create_swapchain(VkPhysicalDevice physical_device, VkDevice device, VkSurfaceKHR surface, VkSurfaceFormatKHR surface_format) {
 	VkSurfaceCapabilitiesKHR surface_caps;
-	VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, surface, &surface_caps));
+	VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, surface, &surface_caps))
 
 	VkExtent2D image_extent = surface_caps.currentExtent;
 	if (image_extent.width == 0xffffffff && image_extent.height == 0xffffffff) {
@@ -180,9 +180,9 @@ static VkSwapchainKHR create_swapchain(VkPhysicalDevice physical_device, VkDevic
 
 	// determine present mode and swapchain image count
 	uint32_t present_mode_count;
-	VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, surface, &present_mode_count, nullptr));
+	VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, surface, &present_mode_count, nullptr))
 	std::vector<VkPresentModeKHR> present_modes(present_mode_count);
-	VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, surface, &present_mode_count, present_modes.data()));
+	VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, surface, &present_mode_count, present_modes.data()))
 
 	bool mailbox_supported = false;
 	bool immediate_supported = false;
@@ -229,7 +229,7 @@ static VkSwapchainKHR create_swapchain(VkPhysicalDevice physical_device, VkDevic
 	desc.oldSwapchain = VK_NULL_HANDLE;
 
 	VkSwapchainKHR swapchain;
-	VK_CHECK(vkCreateSwapchainKHR(device, &desc, nullptr, &swapchain));
+	VK_CHECK(vkCreateSwapchainKHR(device, &desc, nullptr, &swapchain))
 	return swapchain;
 }
 
@@ -287,7 +287,7 @@ static VkRenderPass create_render_pass(VkDevice device, VkFormat color_format, V
 	desc.pDependencies = nullptr;
 
 	VkRenderPass render_pass;
-	VK_CHECK(vkCreateRenderPass(device, &desc, nullptr, &render_pass));
+	VK_CHECK(vkCreateRenderPass(device, &desc, nullptr, &render_pass))
 	return render_pass;
 }
 
@@ -301,7 +301,7 @@ static void record_and_run_commands(VkCommandPool command_pool, VkQueue queue, s
 	alloc_info.commandBufferCount = 1;
 
 	VkCommandBuffer command_buffer;
-	VK_CHECK(vkAllocateCommandBuffers(vk.device, &alloc_info, &command_buffer));
+	VK_CHECK(vkAllocateCommandBuffers(vk.device, &alloc_info, &command_buffer))
 
 	VkCommandBufferBeginInfo begin_info;
 	begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -309,9 +309,9 @@ static void record_and_run_commands(VkCommandPool command_pool, VkQueue queue, s
 	begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 	begin_info.pInheritanceInfo = nullptr;
 
-	VK_CHECK(vkBeginCommandBuffer(command_buffer, &begin_info));
+	VK_CHECK(vkBeginCommandBuffer(command_buffer, &begin_info))
 	recorder(command_buffer);
-	VK_CHECK(vkEndCommandBuffer(command_buffer));
+	VK_CHECK(vkEndCommandBuffer(command_buffer))
 
 	VkSubmitInfo submit_info;
 	submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -324,8 +324,8 @@ static void record_and_run_commands(VkCommandPool command_pool, VkQueue queue, s
 	submit_info.signalSemaphoreCount = 0;
 	submit_info.pSignalSemaphores = nullptr;
 
-	VK_CHECK(vkQueueSubmit(queue, 1, &submit_info, VK_NULL_HANDLE));
-	VK_CHECK(vkQueueWaitIdle(queue));
+	VK_CHECK(vkQueueSubmit(queue, 1, &submit_info, VK_NULL_HANDLE))
+	VK_CHECK(vkQueueWaitIdle(queue))
 	vkFreeCommandBuffers(vk.device, command_pool, 1, &command_buffer);
 }
 
@@ -388,7 +388,7 @@ static void allocate_and_bind_image_memory(VkImage image) {
 		alloc_info.memoryTypeIndex = find_memory_type(vk.physical_device, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
 		VkDeviceMemory memory;
-		VK_CHECK(vkAllocateMemory(vk.device, &alloc_info, nullptr, &memory));
+		VK_CHECK(vkAllocateMemory(vk.device, &alloc_info, nullptr, &memory))
 
 		chunk = &vk_world.image_chunks[vk_world.num_image_chunks];
 		vk_world.num_image_chunks++;
@@ -396,7 +396,7 @@ static void allocate_and_bind_image_memory(VkImage image) {
 		chunk->used = memory_requirements.size;
 	}
 
-	VK_CHECK(vkBindImageMemory(vk.device, image, chunk->memory, chunk->used - memory_requirements.size));
+	VK_CHECK(vkBindImageMemory(vk.device, image, chunk->memory, chunk->used - memory_requirements.size))
 }
 
 static void ensure_staging_buffer_allocation(VkDeviceSize size) {
@@ -420,7 +420,7 @@ static void ensure_staging_buffer_allocation(VkDeviceSize size) {
 	buffer_desc.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	buffer_desc.queueFamilyIndexCount = 0;
 	buffer_desc.pQueueFamilyIndices = nullptr;
-	VK_CHECK(vkCreateBuffer(vk.device, &buffer_desc, nullptr, &vk_world.staging_buffer));
+	VK_CHECK(vkCreateBuffer(vk.device, &buffer_desc, nullptr, &vk_world.staging_buffer))
 
 	VkMemoryRequirements memory_requirements;
 	vkGetBufferMemoryRequirements(vk.device, vk_world.staging_buffer, &memory_requirements);
@@ -433,11 +433,11 @@ static void ensure_staging_buffer_allocation(VkDeviceSize size) {
 	alloc_info.pNext = nullptr;
 	alloc_info.allocationSize = memory_requirements.size;
 	alloc_info.memoryTypeIndex = memory_type;
-	VK_CHECK(vkAllocateMemory(vk.device, &alloc_info, nullptr, &vk_world.staging_buffer_memory));
-	VK_CHECK(vkBindBufferMemory(vk.device, vk_world.staging_buffer, vk_world.staging_buffer_memory, 0));
+	VK_CHECK(vkAllocateMemory(vk.device, &alloc_info, nullptr, &vk_world.staging_buffer_memory))
+	VK_CHECK(vkBindBufferMemory(vk.device, vk_world.staging_buffer, vk_world.staging_buffer_memory, 0))
 
 	void* data;
-	VK_CHECK(vkMapMemory(vk.device, vk_world.staging_buffer_memory, 0, VK_WHOLE_SIZE, 0, &data));
+	VK_CHECK(vkMapMemory(vk.device, vk_world.staging_buffer_memory, 0, VK_WHOLE_SIZE, 0, &data))
 	vk_world.staging_buffer_ptr = (byte*)data;
 }
 
@@ -464,9 +464,9 @@ static void create_instance() {
 	// check extensions availability
 	{
 		uint32_t count = 0;
-		VK_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr));
+		VK_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr))
 		std::vector<VkExtensionProperties> extension_properties(count);
-		VK_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &count, extension_properties.data()));
+		VK_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &count, extension_properties.data()))
 
 		for (auto name : instance_extensions) {
 			bool supported = false;
@@ -483,23 +483,18 @@ static void create_instance() {
 
 	// create instance
 	{
-		VkInstanceCreateInfo desc;
-		desc.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		desc.pNext = nullptr;
-		desc.flags = 0;
-		desc.pApplicationInfo = nullptr;
-		desc.enabledLayerCount = 0;
-		desc.ppEnabledLayerNames = nullptr;
-		desc.enabledExtensionCount = sizeof(instance_extensions)/sizeof(instance_extensions[0]);
-		desc.ppEnabledExtensionNames = instance_extensions;
+		VkInstanceCreateInfo desc{
+		/*desc.sType = */VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+		/*desc.pNext = */nullptr,
+		/*desc.flags = */0,
+		/*desc.pApplicationInfo = */nullptr,
+		/*desc.enabledLayerCount = */0,
+		/*desc.ppEnabledLayerNames = */nullptr,
+		/*desc.enabledExtensionCount = */sizeof(instance_extensions) / sizeof(instance_extensions[0]),
+		/*desc.ppEnabledExtensionNames = */instance_extensions
+		};
 
-#ifndef NDEBUG
-		const char* validation_layer_name = "VK_LAYER_KHRONOS_validation";
-		desc.enabledLayerCount = 1;
-		desc.ppEnabledLayerNames = &validation_layer_name;
-#endif
-
-		VK_CHECK(vkCreateInstance(&desc, nullptr, &vk.instance));
+		VK_CHECK(vkCreateInstance(&desc, nullptr, &vk.instance))
 	}
 }
 
@@ -507,13 +502,13 @@ static void create_device() {
 	// select physical device
 	{
 		uint32_t count;
-		VK_CHECK(vkEnumeratePhysicalDevices(vk.instance, &count, nullptr));
+		VK_CHECK(vkEnumeratePhysicalDevices(vk.instance, &count, nullptr))
 
 		if (count == 0)
 			ri.Error(ERR_FATAL, "Vulkan: no physical device found");
 
 		std::vector<VkPhysicalDevice> physical_devices(count);
-		VK_CHECK(vkEnumeratePhysicalDevices(vk.instance, &count, physical_devices.data()));
+		VK_CHECK(vkEnumeratePhysicalDevices(vk.instance, &count, physical_devices.data()))
 		vk.physical_device = physical_devices[0];
 	}
 
@@ -522,11 +517,11 @@ static void create_device() {
 	// select surface format
 	{
 		uint32_t format_count;
-		VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(vk.physical_device, vk.surface, &format_count, nullptr));
+		VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(vk.physical_device, vk.surface, &format_count, nullptr))
 		assert(format_count > 0);
 
 		std::vector<VkSurfaceFormatKHR> candidates(format_count);
-		VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(vk.physical_device, vk.surface, &format_count, candidates.data()));
+		VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(vk.physical_device, vk.surface, &format_count, candidates.data()))
 
 		
 		if (candidates.size() == 1 && candidates[0].format == VK_FORMAT_UNDEFINED) { // special case that means we can choose any format
@@ -549,7 +544,7 @@ static void create_device() {
 		vk.queue_family_index = -1;
 		for (uint32_t i = 0; i < queue_family_count; i++) {
 			VkBool32 presentation_supported;
-			VK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(vk.physical_device, i, vk.surface, &presentation_supported));
+			VK_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(vk.physical_device, i, vk.surface, &presentation_supported))
 
 			if (presentation_supported && (queue_families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0) {
 				vk.queue_family_index = i;
@@ -567,9 +562,9 @@ static void create_device() {
 		};
 
 		uint32_t count = 0;
-		VK_CHECK(vkEnumerateDeviceExtensionProperties(vk.physical_device, nullptr, &count, nullptr));
+		VK_CHECK(vkEnumerateDeviceExtensionProperties(vk.physical_device, nullptr, &count, nullptr))
 		std::vector<VkExtensionProperties> extension_properties(count);
-		VK_CHECK(vkEnumerateDeviceExtensionProperties(vk.physical_device, nullptr, &count, extension_properties.data()));
+		VK_CHECK(vkEnumerateDeviceExtensionProperties(vk.physical_device, nullptr, &count, extension_properties.data()))
 
 		for (auto name : device_extensions) {
 			bool supported = false;
@@ -608,7 +603,7 @@ static void create_device() {
 		device_desc.enabledExtensionCount = sizeof(device_extensions)/sizeof(device_extensions[0]);
 		device_desc.ppEnabledExtensionNames = device_extensions;
 		device_desc.pEnabledFeatures = &features;
-		VK_CHECK(vkCreateDevice(vk.physical_device, &device_desc, nullptr, &vk.device));
+		VK_CHECK(vkCreateDevice(vk.physical_device, &device_desc, nullptr, &vk.device))
 	}
 }
 
@@ -659,7 +654,7 @@ static void init_vulkan_library() {
 		desc.pfnCallback = &debug_callback;
 		desc.pUserData = nullptr;
 
-		VK_CHECK(vkCreateDebugReportCallbackEXT(vk.instance, &desc, nullptr, &vk.debug_callback));
+		VK_CHECK(vkCreateDebugReportCallbackEXT(vk.instance, &desc, nullptr, &vk.debug_callback))
 	}
 #endif
 
@@ -865,9 +860,9 @@ void vk_initialize() {
 	{
 		vk.swapchain = create_swapchain(vk.physical_device, vk.device, vk.surface, vk.surface_format);
 
-		VK_CHECK(vkGetSwapchainImagesKHR(vk.device, vk.swapchain, &vk.swapchain_image_count, nullptr));
+		VK_CHECK(vkGetSwapchainImagesKHR(vk.device, vk.swapchain, &vk.swapchain_image_count, nullptr))
 		vk.swapchain_image_count = std::min(vk.swapchain_image_count, (uint32_t)MAX_SWAPCHAIN_IMAGES);
-		VK_CHECK(vkGetSwapchainImagesKHR(vk.device, vk.swapchain, &vk.swapchain_image_count, vk.swapchain_images));
+		VK_CHECK(vkGetSwapchainImagesKHR(vk.device, vk.swapchain, &vk.swapchain_image_count, vk.swapchain_images))
 
 		for (uint32_t i = 0; i < vk.swapchain_image_count; i++) {
 			VkImageViewCreateInfo desc;
@@ -886,7 +881,7 @@ void vk_initialize() {
 			desc.subresourceRange.levelCount = 1;
 			desc.subresourceRange.baseArrayLayer = 0;
 			desc.subresourceRange.layerCount = 1;
-			VK_CHECK(vkCreateImageView(vk.device, &desc, nullptr, &vk.swapchain_image_views[i]));
+			VK_CHECK(vkCreateImageView(vk.device, &desc, nullptr, &vk.swapchain_image_views[i]))
 		}
 	}
 
@@ -899,14 +894,14 @@ void vk_initialize() {
 		desc.pNext = nullptr;
 		desc.flags = 0;
 
-		VK_CHECK(vkCreateSemaphore(vk.device, &desc, nullptr, &vk.image_acquired));
-		VK_CHECK(vkCreateSemaphore(vk.device, &desc, nullptr, &vk.rendering_finished));
+		VK_CHECK(vkCreateSemaphore(vk.device, &desc, nullptr, &vk.image_acquired))
+		VK_CHECK(vkCreateSemaphore(vk.device, &desc, nullptr, &vk.rendering_finished))
 
 		VkFenceCreateInfo fence_desc;
 		fence_desc.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		fence_desc.pNext = nullptr;
 		fence_desc.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-		VK_CHECK(vkCreateFence(vk.device, &fence_desc, nullptr, &vk.rendering_finished_fence));
+		VK_CHECK(vkCreateFence(vk.device, &fence_desc, nullptr, &vk.rendering_finished_fence))
 	}
 
 	//
@@ -919,7 +914,7 @@ void vk_initialize() {
 		desc.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		desc.queueFamilyIndex = vk.queue_family_index;
 
-		VK_CHECK(vkCreateCommandPool(vk.device, &desc, nullptr, &vk.command_pool));
+		VK_CHECK(vkCreateCommandPool(vk.device, &desc, nullptr, &vk.command_pool))
 	}
 
 	//
@@ -932,7 +927,7 @@ void vk_initialize() {
 		alloc_info.commandPool = vk.command_pool;
 		alloc_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		alloc_info.commandBufferCount = 1;
-		VK_CHECK(vkAllocateCommandBuffers(vk.device, &alloc_info, &vk.command_buffer));
+		VK_CHECK(vkAllocateCommandBuffers(vk.device, &alloc_info, &vk.command_buffer))
 	}
 
 	//
@@ -961,7 +956,7 @@ void vk_initialize() {
 			desc.queueFamilyIndexCount = 0;
 			desc.pQueueFamilyIndices = nullptr;
 			desc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			VK_CHECK(vkCreateImage(vk.device, &desc, nullptr, &vk.depth_image));
+			VK_CHECK(vkCreateImage(vk.device, &desc, nullptr, &vk.depth_image))
 		}
 
 		// allocate depth image memory
@@ -975,8 +970,8 @@ void vk_initialize() {
 			alloc_info.allocationSize = memory_requirements.size;
 			alloc_info.memoryTypeIndex = find_memory_type(vk.physical_device, memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-			VK_CHECK(vkAllocateMemory(vk.device, &alloc_info, nullptr, &vk.depth_image_memory));
-			VK_CHECK(vkBindImageMemory(vk.device, vk.depth_image, vk.depth_image_memory, 0));
+			VK_CHECK(vkAllocateMemory(vk.device, &alloc_info, nullptr, &vk.depth_image_memory))
+			VK_CHECK(vkBindImageMemory(vk.device, vk.depth_image, vk.depth_image_memory, 0))
 		}
 
 		// create depth image view
@@ -997,7 +992,7 @@ void vk_initialize() {
 			desc.subresourceRange.levelCount = 1;
 			desc.subresourceRange.baseArrayLayer = 0;
 			desc.subresourceRange.layerCount = 1;
-			VK_CHECK(vkCreateImageView(vk.device, &desc, nullptr, &vk.depth_image_view));
+			VK_CHECK(vkCreateImageView(vk.device, &desc, nullptr, &vk.depth_image_view))
 		}
 
 		VkImageAspectFlags image_aspect_flags = VK_IMAGE_ASPECT_DEPTH_BIT;
@@ -1037,7 +1032,7 @@ void vk_initialize() {
 
 		for (uint32_t i = 0; i < vk.swapchain_image_count; i++) {
 			attachments[0] = vk.swapchain_image_views[i]; // set color attachment
-			VK_CHECK(vkCreateFramebuffer(vk.device, &desc, nullptr, &vk.framebuffers[i]));
+			VK_CHECK(vkCreateFramebuffer(vk.device, &desc, nullptr, &vk.framebuffers[i]))
 		}
 	}
 
@@ -1057,7 +1052,7 @@ void vk_initialize() {
 		desc.poolSizeCount = 1;
 		desc.pPoolSizes = &pool_size;
 
-		VK_CHECK(vkCreateDescriptorPool(vk.device, &desc, nullptr, &vk.descriptor_pool));
+		VK_CHECK(vkCreateDescriptorPool(vk.device, &desc, nullptr, &vk.descriptor_pool))
 	}
 
 	//
@@ -1078,7 +1073,7 @@ void vk_initialize() {
 		desc.bindingCount = 1;
 		desc.pBindings = &descriptor_binding;
 
-		VK_CHECK(vkCreateDescriptorSetLayout(vk.device, &desc, nullptr, &vk.set_layout));
+		VK_CHECK(vkCreateDescriptorSetLayout(vk.device, &desc, nullptr, &vk.set_layout))
 	}
 
 	//
@@ -1101,7 +1096,7 @@ void vk_initialize() {
 		desc.pushConstantRangeCount = 1;
 		desc.pPushConstantRanges = &push_range;
 
-		VK_CHECK(vkCreatePipelineLayout(vk.device, &desc, nullptr, &vk.pipeline_layout));
+		VK_CHECK(vkCreatePipelineLayout(vk.device, &desc, nullptr, &vk.pipeline_layout))
 	}
 
 	//
@@ -1118,11 +1113,11 @@ void vk_initialize() {
 
 		desc.size = VERTEX_BUFFER_SIZE;
 		desc.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-		VK_CHECK(vkCreateBuffer(vk.device, &desc, nullptr, &vk.vertex_buffer));
+		VK_CHECK(vkCreateBuffer(vk.device, &desc, nullptr, &vk.vertex_buffer))
 
 		desc.size = INDEX_BUFFER_SIZE;
 		desc.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-		VK_CHECK(vkCreateBuffer(vk.device, &desc, nullptr, &vk.index_buffer));
+		VK_CHECK(vkCreateBuffer(vk.device, &desc, nullptr, &vk.index_buffer))
 
 		VkMemoryRequirements vb_memory_requirements;
 		vkGetBufferMemoryRequirements(vk.device, vk.vertex_buffer, &vb_memory_requirements);
@@ -1141,13 +1136,13 @@ void vk_initialize() {
 		alloc_info.pNext = nullptr;
 		alloc_info.allocationSize = index_buffer_offset + ib_memory_requirements.size;
 		alloc_info.memoryTypeIndex = memory_type;
-		VK_CHECK(vkAllocateMemory(vk.device, &alloc_info, nullptr, &vk.geometry_buffer_memory));
+		VK_CHECK(vkAllocateMemory(vk.device, &alloc_info, nullptr, &vk.geometry_buffer_memory))
 
 		vkBindBufferMemory(vk.device, vk.vertex_buffer, vk.geometry_buffer_memory, 0);
 		vkBindBufferMemory(vk.device, vk.index_buffer, vk.geometry_buffer_memory, index_buffer_offset);
 
 		void* data;
-		VK_CHECK(vkMapMemory(vk.device, vk.geometry_buffer_memory, 0, VK_WHOLE_SIZE, 0, &data));
+		VK_CHECK(vkMapMemory(vk.device, vk.geometry_buffer_memory, 0, VK_WHOLE_SIZE, 0, &data))
 		vk.vertex_buffer_ptr = (byte*)data;
 		vk.index_buffer_ptr = (byte*)data + index_buffer_offset;
 	}
@@ -1168,7 +1163,7 @@ void vk_initialize() {
 			desc.pCode = reinterpret_cast<const uint32_t*>(bytes);
 			   
 			VkShaderModule module;
-			VK_CHECK(vkCreateShaderModule(vk.device, &desc, nullptr, &module));
+			VK_CHECK(vkCreateShaderModule(vk.device, &desc, nullptr, &module))
 			return module;
 		};
 
@@ -1424,7 +1419,7 @@ void vk_release_resources() {
 
 	Com_Memset(&vk_world, 0, sizeof(vk_world));
 
-	VK_CHECK(vkResetDescriptorPool(vk.device, vk.descriptor_pool, 0));
+	VK_CHECK(vkResetDescriptorPool(vk.device, vk.descriptor_pool, 0))
 
 	// Reset geometry buffer's current offsets.
 	vk.xyz_elements = 0;
@@ -1474,7 +1469,7 @@ Vk_Image vk_create_image(int width, int height, VkFormat format, int mip_levels,
 		desc.pQueueFamilyIndices = nullptr;
 		desc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-		VK_CHECK(vkCreateImage(vk.device, &desc, nullptr, &image.handle));
+		VK_CHECK(vkCreateImage(vk.device, &desc, nullptr, &image.handle))
 		allocate_and_bind_image_memory(image.handle);
 	}
 
@@ -1496,7 +1491,7 @@ Vk_Image vk_create_image(int width, int height, VkFormat format, int mip_levels,
 		desc.subresourceRange.levelCount = VK_REMAINING_MIP_LEVELS;
 		desc.subresourceRange.baseArrayLayer = 0;
 		desc.subresourceRange.layerCount = 1;
-		VK_CHECK(vkCreateImageView(vk.device, &desc, nullptr, &image.view));
+		VK_CHECK(vkCreateImageView(vk.device, &desc, nullptr, &image.view))
 	}
 
 	// create associated descriptor set
@@ -1507,7 +1502,7 @@ Vk_Image vk_create_image(int width, int height, VkFormat format, int mip_levels,
 		desc.descriptorPool = vk.descriptor_pool;
 		desc.descriptorSetCount = 1;
 		desc.pSetLayouts = &vk.set_layout;
-		VK_CHECK(vkAllocateDescriptorSets(vk.device, &desc, &image.descriptor_set));
+		VK_CHECK(vkAllocateDescriptorSets(vk.device, &desc, &image.descriptor_set))
 
 		vk_update_descriptor_set(image.descriptor_set, image.view, mip_levels > 1, repeat_texture);
 		vk_world.current_descriptor_sets[glState.currenttmu] = image.descriptor_set;
@@ -1937,7 +1932,7 @@ static VkPipeline create_pipeline(const Vk_Pipeline_Def& def) {
 	create_info.basePipelineIndex = -1;
 
 	VkPipeline pipeline;
-	VK_CHECK(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &create_info, nullptr, &pipeline));
+	VK_CHECK(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &create_info, nullptr, &pipeline))
 	return pipeline;
 }
 
@@ -2018,7 +2013,7 @@ VkSampler vk_find_sampler(const Vk_Sampler_Def& def) {
 	desc.unnormalizedCoordinates = VK_FALSE;
 
 	VkSampler sampler;
-	VK_CHECK(vkCreateSampler(vk.device, &desc, nullptr, &sampler));
+	VK_CHECK(vkCreateSampler(vk.device, &desc, nullptr, &sampler))
 
 	vk_world.sampler_defs[vk_world.num_samplers] = def;
 	vk_world.samplers[vk_world.num_samplers] = sampler;
@@ -2251,7 +2246,7 @@ void vk_bind_geometry() {
 		// when computing clipping plane too.
 		float* eye_xform = push_constants + 16;
 		for (int i = 0; i < 12; i++) {
-			eye_xform[i] = backEnd.or.modelMatrix[(i%4)*4 + i/4 ];
+			eye_xform[i] = backEnd.orient.modelMatrix[(i%4)*4 + i/4 ];
 		}
 
 		// Clipping plane in eye coordinates.
@@ -2262,10 +2257,10 @@ void vk_bind_geometry() {
 		world_plane[3] = backEnd.viewParms.portalPlane.dist;
 
 		float eye_plane[4];
-		eye_plane[0] = DotProduct (backEnd.viewParms.or.axis[0], world_plane);
-		eye_plane[1] = DotProduct (backEnd.viewParms.or.axis[1], world_plane);
-		eye_plane[2] = DotProduct (backEnd.viewParms.or.axis[2], world_plane);
-		eye_plane[3] = DotProduct (world_plane, backEnd.viewParms.or.origin) - world_plane[3];
+		eye_plane[0] = DotProduct (backEnd.viewParms.orient.axis[0], world_plane);
+		eye_plane[1] = DotProduct (backEnd.viewParms.orient.axis[1], world_plane);
+		eye_plane[2] = DotProduct (backEnd.viewParms.orient.axis[2], world_plane);
+		eye_plane[3] = DotProduct (world_plane, backEnd.viewParms.orient.origin) - world_plane[3];
 
 		// Apply s_flipMatrix to be in the same coordinate system as eye_xfrom.
 		push_constants[28] = -eye_plane[1];
@@ -2345,10 +2340,10 @@ void vk_begin_frame() {
 	if (!vk.active)
 		return;
 
-	VK_CHECK(vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.image_acquired, VK_NULL_HANDLE, &vk.swapchain_image_index));
+	VK_CHECK(vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.image_acquired, VK_NULL_HANDLE, &vk.swapchain_image_index))
 
-	VK_CHECK(vkWaitForFences(vk.device, 1, &vk.rendering_finished_fence, VK_FALSE, 1e9));
-	VK_CHECK(vkResetFences(vk.device, 1, &vk.rendering_finished_fence));
+	VK_CHECK(vkWaitForFences(vk.device, 1, &vk.rendering_finished_fence, VK_FALSE, 1e9))
+	VK_CHECK(vkResetFences(vk.device, 1, &vk.rendering_finished_fence))
 
 	VkCommandBufferBeginInfo begin_info;
 	begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -2356,7 +2351,7 @@ void vk_begin_frame() {
 	begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 	begin_info.pInheritanceInfo = nullptr;
 
-	VK_CHECK(vkBeginCommandBuffer(vk.command_buffer, &begin_info));
+	VK_CHECK(vkBeginCommandBuffer(vk.command_buffer, &begin_info))
 
 	// Ensure visibility of geometry buffers writes.
 	record_buffer_memory_barrier(vk.command_buffer, vk.vertex_buffer,
@@ -2396,7 +2391,7 @@ void vk_end_frame() {
 		return;
 
 	vkCmdEndRenderPass(vk.command_buffer);
-	VK_CHECK(vkEndCommandBuffer(vk.command_buffer));
+	VK_CHECK(vkEndCommandBuffer(vk.command_buffer))
 
 	VkPipelineStageFlags wait_dst_stage_mask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	VkSubmitInfo submit_info;
@@ -2410,7 +2405,7 @@ void vk_end_frame() {
 	submit_info.signalSemaphoreCount = 1;
 	submit_info.pSignalSemaphores = &vk.rendering_finished;
 
-	VK_CHECK(vkQueueSubmit(vk.queue, 1, &submit_info, vk.rendering_finished_fence));
+	VK_CHECK(vkQueueSubmit(vk.queue, 1, &submit_info, vk.rendering_finished_fence))
 
 	VkPresentInfoKHR present_info;
 	present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -2421,7 +2416,7 @@ void vk_end_frame() {
 	present_info.pSwapchains = &vk.swapchain;
 	present_info.pImageIndices = &vk.swapchain_image_index;
 	present_info.pResults = nullptr;
-	VK_CHECK(vkQueuePresentKHR(vk.queue, &present_info));
+	VK_CHECK(vkQueuePresentKHR(vk.queue, &present_info))
 }
 
 void vk_read_pixels(byte* buffer) {
@@ -2447,7 +2442,7 @@ void vk_read_pixels(byte* buffer) {
 	desc.pQueueFamilyIndices = nullptr;
 	desc.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	VkImage image;
-	VK_CHECK(vkCreateImage(vk.device, &desc, nullptr, &image));
+	VK_CHECK(vkCreateImage(vk.device, &desc, nullptr, &image))
 
 	VkMemoryRequirements memory_requirements;
 	vkGetImageMemoryRequirements(vk.device, image, &memory_requirements);
@@ -2458,8 +2453,8 @@ void vk_read_pixels(byte* buffer) {
 	alloc_info.memoryTypeIndex = find_memory_type(vk.physical_device, memory_requirements.memoryTypeBits,
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	VkDeviceMemory memory;
-	VK_CHECK(vkAllocateMemory(vk.device, &alloc_info, nullptr, &memory));
-	VK_CHECK(vkBindImageMemory(vk.device, image, memory, 0));
+	VK_CHECK(vkAllocateMemory(vk.device, &alloc_info, nullptr, &memory))
+	VK_CHECK(vkBindImageMemory(vk.device, image, memory, 0))
 
 	record_and_run_commands(vk.command_pool, vk.queue, [&image](VkCommandBuffer command_buffer) {
 		record_image_layout_transition(command_buffer, vk.swapchain_images[vk.swapchain_image_index], VK_IMAGE_ASPECT_COLOR_BIT,
@@ -2526,7 +2521,7 @@ void vk_read_pixels(byte* buffer) {
 	vkGetImageSubresourceLayout(vk.device, image, &subresource, &layout);
 
 	byte* data;
-	VK_CHECK(vkMapMemory(vk.device, memory, 0, VK_WHOLE_SIZE, 0, (void**)&data));
+	VK_CHECK(vkMapMemory(vk.device, memory, 0, VK_WHOLE_SIZE, 0, (void**)&data))
 	data += layout.offset;
 
 	byte* buffer_ptr = buffer + glConfig.vidWidth * (glConfig.vidHeight - 1) * 4;

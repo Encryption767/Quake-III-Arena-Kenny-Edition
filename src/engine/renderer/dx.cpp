@@ -129,13 +129,13 @@ void dx_initialize() {
 #endif
 
 	IDXGIFactory4* factory;
-	DX_CHECK(CreateDXGIFactory1(IID_PPV_ARGS(&factory)));
+	DX_CHECK(CreateDXGIFactory1(IID_PPV_ARGS(&factory)))
 
 	// Create device.
 	{
 		IDXGIAdapter1* hardware_adapter;
 		get_hardware_adapter(factory, &hardware_adapter);
-		DX_CHECK(D3D12CreateDevice(hardware_adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&dx.device)));
+		DX_CHECK(D3D12CreateDevice(hardware_adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&dx.device)))
 		hardware_adapter->Release();
 	}
 
@@ -144,7 +144,7 @@ void dx_initialize() {
 		D3D12_COMMAND_QUEUE_DESC queue_desc{};
 		queue_desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 		queue_desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-		DX_CHECK(dx.device->CreateCommandQueue(&queue_desc, IID_PPV_ARGS(&dx.command_queue)));
+		DX_CHECK(dx.device->CreateCommandQueue(&queue_desc, IID_PPV_ARGS(&dx.command_queue)))
 	}
 
 	//
@@ -168,14 +168,14 @@ void dx_initialize() {
 			nullptr,
 			nullptr,
 			&swapchain
-			));
+			))
 
-		DX_CHECK(factory->MakeWindowAssociation(g_wv.hWnd_dx, DXGI_MWA_NO_ALT_ENTER));
+		DX_CHECK(factory->MakeWindowAssociation(g_wv.hWnd_dx, DXGI_MWA_NO_ALT_ENTER))
 		swapchain->QueryInterface(__uuidof(IDXGISwapChain3), (void**)&dx.swapchain);
 		swapchain->Release();
 
 		for (int i = 0; i < SWAPCHAIN_BUFFER_COUNT; i++) {
-			DX_CHECK(dx.swapchain->GetBuffer(i, IID_PPV_ARGS(&dx.render_targets[i])));
+			DX_CHECK(dx.swapchain->GetBuffer(i, IID_PPV_ARGS(&dx.render_targets[i])))
 		}
 	}
 
@@ -187,21 +187,21 @@ void dx_initialize() {
 	//
 	{
 		DX_CHECK(dx.device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-			IID_PPV_ARGS(&dx.command_allocator)));
+			IID_PPV_ARGS(&dx.command_allocator)))
 
 		DX_CHECK(dx.device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-			IID_PPV_ARGS(&dx.helper_command_allocator)));
+			IID_PPV_ARGS(&dx.helper_command_allocator)))
 
 		DX_CHECK(dx.device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, dx.command_allocator, nullptr,
 			IID_PPV_ARGS(&dx.command_list)));
-		DX_CHECK(dx.command_list->Close());
+		DX_CHECK(dx.command_list->Close())
 	}
 
 	//
 	// Create synchronization objects.
 	//
 	{
-		DX_CHECK(dx.device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&dx.fence)));
+		DX_CHECK(dx.device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&dx.fence)))
 		dx.fence_event = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 	}
 
@@ -216,7 +216,7 @@ void dx_initialize() {
 			heap_desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 			heap_desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 			heap_desc.NodeMask = 0;
-			DX_CHECK(dx.device->CreateDescriptorHeap(&heap_desc, IID_PPV_ARGS(&dx.rtv_heap)));
+			DX_CHECK(dx.device->CreateDescriptorHeap(&heap_desc, IID_PPV_ARGS(&dx.rtv_heap)))
 			dx.rtv_descriptor_size = dx.device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		}
 
@@ -227,7 +227,7 @@ void dx_initialize() {
 			heap_desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 			heap_desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 			heap_desc.NodeMask = 0;
-			DX_CHECK(dx.device->CreateDescriptorHeap(&heap_desc, IID_PPV_ARGS(&dx.dsv_heap)));
+			DX_CHECK(dx.device->CreateDescriptorHeap(&heap_desc, IID_PPV_ARGS(&dx.dsv_heap)))
 		}
 
 		// SRV heap.
@@ -237,7 +237,7 @@ void dx_initialize() {
 			heap_desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 			heap_desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 			heap_desc.NodeMask = 0;
-			DX_CHECK(dx.device->CreateDescriptorHeap(&heap_desc, IID_PPV_ARGS(&dx.srv_heap)));
+			DX_CHECK(dx.device->CreateDescriptorHeap(&heap_desc, IID_PPV_ARGS(&dx.srv_heap)))
 			dx.srv_descriptor_size = dx.device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 		}
 
@@ -248,7 +248,7 @@ void dx_initialize() {
 			heap_desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER;
 			heap_desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 			heap_desc.NodeMask = 0;
-			DX_CHECK(dx.device->CreateDescriptorHeap(&heap_desc, IID_PPV_ARGS(&dx.sampler_heap)));
+			DX_CHECK(dx.device->CreateDescriptorHeap(&heap_desc, IID_PPV_ARGS(&dx.sampler_heap)))
 			dx.sampler_descriptor_size = dx.device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER);
 		}
 	}
@@ -321,13 +321,15 @@ void dx_initialize() {
 		optimized_clear_value.DepthStencil.Depth = 1.0f;
 		optimized_clear_value.DepthStencil.Stencil = 0;
 
+		D3D12_HEAP_PROPERTIES heap_properties = get_heap_properties(D3D12_HEAP_TYPE_DEFAULT);
+
 		DX_CHECK(dx.device->CreateCommittedResource(
-			&get_heap_properties(D3D12_HEAP_TYPE_DEFAULT),
+			&heap_properties,
 			D3D12_HEAP_FLAG_NONE,
 			&depth_desc,
 			D3D12_RESOURCE_STATE_DEPTH_WRITE,
 			&optimized_clear_value,
-			IID_PPV_ARGS(&dx.depth_stencil_buffer)));
+			IID_PPV_ARGS(&dx.depth_stencil_buffer)))
 
 		D3D12_DEPTH_STENCIL_VIEW_DESC view_desc{};
 		view_desc.Format = get_depth_format();
@@ -383,9 +385,9 @@ void dx_initialize() {
 		ID3DBlob* signature;
 		ID3DBlob* error;
 		DX_CHECK(D3D12SerializeRootSignature(&root_signature_desc, D3D_ROOT_SIGNATURE_VERSION_1,
-			&signature, &error));
+			&signature, &error))
 		DX_CHECK(dx.device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(),
-			IID_PPV_ARGS(&dx.root_signature)));
+			IID_PPV_ARGS(&dx.root_signature)))
 
 		if (signature != nullptr)
 			signature->Release();
@@ -397,18 +399,20 @@ void dx_initialize() {
 	// Geometry buffers.
 	//
 	{
+		D3D12_HEAP_PROPERTIES heap_properties = get_heap_properties(D3D12_HEAP_TYPE_UPLOAD);
+		D3D12_RESOURCE_DESC buffer_desc = get_buffer_desc(VERTEX_BUFFER_SIZE + INDEX_BUFFER_SIZE);
 		// store geometry in upload heap since Q3 regenerates it every frame
 		DX_CHECK(dx.device->CreateCommittedResource(
-			&get_heap_properties(D3D12_HEAP_TYPE_UPLOAD),
+			&heap_properties,
 			D3D12_HEAP_FLAG_NONE,
-			&get_buffer_desc(VERTEX_BUFFER_SIZE + INDEX_BUFFER_SIZE),
+			&buffer_desc,
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
-			IID_PPV_ARGS(&dx.geometry_buffer)));
+			IID_PPV_ARGS(&dx.geometry_buffer)))
 
 		void* p_data;
 		D3D12_RANGE read_range{};
-        DX_CHECK(dx.geometry_buffer->Map(0, &read_range, &p_data));
+        DX_CHECK(dx.geometry_buffer->Map(0, &read_range, &p_data))
 
 		dx.vertex_buffer_ptr = static_cast<byte*>(p_data);
 
@@ -614,8 +618,8 @@ void dx_release_resources() {
 
 void dx_wait_device_idle() {
 	dx.fence_value++;
-	DX_CHECK(dx.command_queue->Signal(dx.fence, dx.fence_value));
-	DX_CHECK(dx.fence->SetEventOnCompletion(dx.fence_value, dx.fence_event));
+	DX_CHECK(dx.command_queue->Signal(dx.fence, dx.fence_value))
+	DX_CHECK(dx.fence->SetEventOnCompletion(dx.fence_value, dx.fence_event))
 	WaitForSingleObject(dx.fence_event, INFINITE);
 }
 
@@ -646,14 +650,14 @@ Dx_Image dx_create_image(int width, int height, Dx_Image_Format format, int mip_
 		desc.SampleDesc.Quality = 0;
 		desc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 		desc.Flags = D3D12_RESOURCE_FLAG_NONE;
-
+		D3D12_HEAP_PROPERTIES heap_properties = get_heap_properties(D3D12_HEAP_TYPE_DEFAULT);
 		DX_CHECK(dx.device->CreateCommittedResource(
-			&get_heap_properties(D3D12_HEAP_TYPE_DEFAULT),
+			&heap_properties,
 			D3D12_HEAP_FLAG_NONE,
 			&desc,
 			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 			nullptr,
-			IID_PPV_ARGS(&image.texture)));
+			IID_PPV_ARGS(&image.texture)))
 	}
 
 	// create texture descriptor
@@ -710,16 +714,18 @@ void dx_upload_image_data(ID3D12Resource* texture, int width, int height, int mi
 	// Create upload upload texture.
 	//
 	ID3D12Resource* upload_texture;
+	D3D12_HEAP_PROPERTIES heap_properties = get_heap_properties(D3D12_HEAP_TYPE_UPLOAD);
+	D3D12_RESOURCE_DESC buffer_desc = get_buffer_desc(buffer_size);
 	DX_CHECK(dx.device->CreateCommittedResource(
-			&get_heap_properties(D3D12_HEAP_TYPE_UPLOAD),
+			&heap_properties,
 			D3D12_HEAP_FLAG_NONE,
-			&get_buffer_desc(buffer_size),
+			&buffer_desc,
 			D3D12_RESOURCE_STATE_GENERIC_READ,
 			nullptr,
-			IID_PPV_ARGS(&upload_texture)));
+			IID_PPV_ARGS(&upload_texture)))
 
 	byte* upload_texture_data;
-	DX_CHECK(upload_texture->Map(0, nullptr, reinterpret_cast<void**>(&upload_texture_data)));
+	DX_CHECK(upload_texture->Map(0, nullptr, reinterpret_cast<void**>(&upload_texture_data)))
 	w = width;
 	h = height;
 	for (int i = 0; i < mip_levels; i++) {
@@ -741,8 +747,10 @@ void dx_upload_image_data(ID3D12Resource* texture, int width, int height, int mi
 	record_and_run_commands([texture, upload_texture, &regions, mip_levels]
 		(ID3D12GraphicsCommandList* command_list)
 	{
-		command_list->ResourceBarrier(1, &get_transition_barrier(texture,
-			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST));
+
+		D3D12_RESOURCE_BARRIER transition_barrier = get_transition_barrier(texture,
+			D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+		command_list->ResourceBarrier(1, &transition_barrier);
 
 		for (UINT i = 0; i < mip_levels; ++i) {
 			D3D12_TEXTURE_COPY_LOCATION  dst;
@@ -758,8 +766,9 @@ void dx_upload_image_data(ID3D12Resource* texture, int width, int height, int mi
 			command_list->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 		}
 
-		command_list->ResourceBarrier(1, &get_transition_barrier(texture,
-			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+		transition_barrier = get_transition_barrier(texture,
+													D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		command_list->ResourceBarrier(1, &transition_barrier);
 	});
 
 	upload_texture->Release();
@@ -1040,7 +1049,7 @@ static ID3D12PipelineState* create_pipeline(const Vk_Pipeline_Def& def) {
 	pipeline_desc.SampleDesc.Quality = 0;
 
 	ID3D12PipelineState* pipeline;
-	DX_CHECK(dx.device->CreateGraphicsPipelineState(&pipeline_desc, IID_PPV_ARGS(&pipeline)));
+	DX_CHECK(dx.device->CreateGraphicsPipelineState(&pipeline_desc, IID_PPV_ARGS(&pipeline)))
 	return pipeline;
 }
 
@@ -1312,7 +1321,7 @@ void dx_bind_geometry() {
 		// when computing clipping plane too.
 		float* eye_xform = root_constants + 16;
 		for (int i = 0; i < 12; i++) {
-			eye_xform[i] = backEnd.or.modelMatrix[(i%4)*4 + i/4 ];
+			eye_xform[i] = backEnd.orient.modelMatrix[(i%4)*4 + i/4 ];
 		}
 
 		// Clipping plane in eye coordinates.
@@ -1323,10 +1332,10 @@ void dx_bind_geometry() {
 		world_plane[3] = backEnd.viewParms.portalPlane.dist;
 
 		float eye_plane[4];
-		eye_plane[0] = DotProduct (backEnd.viewParms.or.axis[0], world_plane);
-		eye_plane[1] = DotProduct (backEnd.viewParms.or.axis[1], world_plane);
-		eye_plane[2] = DotProduct (backEnd.viewParms.or.axis[2], world_plane);
-		eye_plane[3] = DotProduct (world_plane, backEnd.viewParms.or.origin) - world_plane[3];
+		eye_plane[0] = DotProduct (backEnd.viewParms.orient.axis[0], world_plane);
+		eye_plane[1] = DotProduct (backEnd.viewParms.orient.axis[1], world_plane);
+		eye_plane[2] = DotProduct (backEnd.viewParms.orient.axis[2], world_plane);
+		eye_plane[3] = DotProduct (world_plane, backEnd.viewParms.orient.origin) - world_plane[3];
 
 		// Apply s_flipMatrix to be in the same coordinate system as eye_xfrom.
 		root_constants[28] = -eye_plane[1];
@@ -1435,22 +1444,24 @@ void dx_begin_frame() {
 		return;
 
 	if (dx.fence->GetCompletedValue() < dx.fence_value) {
-		DX_CHECK(dx.fence->SetEventOnCompletion(dx.fence_value, dx.fence_event));
+		DX_CHECK(dx.fence->SetEventOnCompletion(dx.fence_value, dx.fence_event))
 		WaitForSingleObject(dx.fence_event, INFINITE);
 	}
 
 	dx.frame_index = dx.swapchain->GetCurrentBackBufferIndex();
 
-	DX_CHECK(dx.command_allocator->Reset());
-	DX_CHECK(dx.command_list->Reset(dx.command_allocator, nullptr));
+	DX_CHECK(dx.command_allocator->Reset())
+	DX_CHECK(dx.command_list->Reset(dx.command_allocator, nullptr))
 
 	dx.command_list->SetGraphicsRootSignature(dx.root_signature);
 
 	ID3D12DescriptorHeap* heaps[] = { dx.srv_heap, dx.sampler_heap };
 	dx.command_list->SetDescriptorHeaps(_countof(heaps), heaps);
 
-	dx.command_list->ResourceBarrier(1, &get_transition_barrier(dx.render_targets[dx.frame_index],
-		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+	D3D12_RESOURCE_BARRIER transition_barrier = get_transition_barrier(dx.render_targets[dx.frame_index],
+																	   D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+
+	dx.command_list->ResourceBarrier(1, &transition_barrier);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE dsv_handle = dx.dsv_heap->GetCPUDescriptorHandleForHeapStart();
 
@@ -1468,18 +1479,20 @@ void dx_end_frame() {
 	if (!dx.active)
 		return;
 
-	dx.command_list->ResourceBarrier(1, &get_transition_barrier(dx.render_targets[dx.frame_index],
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+	D3D12_RESOURCE_BARRIER transition_barrier = get_transition_barrier(dx.render_targets[dx.frame_index],
+																	   D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
-	DX_CHECK(dx.command_list->Close());
+	dx.command_list->ResourceBarrier(1, &transition_barrier);
+
+	DX_CHECK(dx.command_list->Close())
 
 	ID3D12CommandList* command_list = dx.command_list;
 	dx.command_queue->ExecuteCommandLists(1, &command_list);
 
 	dx.fence_value++;
-	DX_CHECK(dx.command_queue->Signal(dx.fence, dx.fence_value));
+	DX_CHECK(dx.command_queue->Signal(dx.fence, dx.fence_value))
 
-	DX_CHECK(dx.swapchain->Present(0, 0));
+	DX_CHECK(dx.swapchain->Present(0, 0))
 }
 
 #else // ENABLE_DX12

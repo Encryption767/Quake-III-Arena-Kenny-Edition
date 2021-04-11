@@ -1882,7 +1882,7 @@ static shader_t *GeneratePermanentShader( void ) {
 
 	*newShader = shader;
 
-	if ( shader.sort <= SS_OPAQUE ) {
+	if ( static_cast<int>(shader.sort) <= SS_OPAQUE ) {
 		newShader->fogPass = FP_EQUAL;
 	} else if ( shader.contentFlags & CONTENTS_FOG ) {
 		newShader->fogPass = FP_LE;
@@ -1935,7 +1935,7 @@ static void VertexLightingCollapse( void ) {
 	int		rank;
 
 	// if we aren't opaque, just use the first pass
-	if ( shader.sort == SS_OPAQUE ) {
+	if ( static_cast<int>(shader.sort) == SS_OPAQUE ) {
 
 		// pick the best texture for the single pass
 		bestStage = &stages[0];

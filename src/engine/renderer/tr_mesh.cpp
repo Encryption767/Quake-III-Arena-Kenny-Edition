@@ -31,8 +31,8 @@ static float ProjectRadius( float r, vec3_t location )
 	vec3_t	p;
 	float	projected[4];
 
-	c = DotProduct( tr.viewParms.or.axis[0], tr.viewParms.or.origin );
-	dist = DotProduct( tr.viewParms.or.axis[0], location ) - c;
+	c = DotProduct( tr.viewParms.orient.axis[0], tr.viewParms.orient.origin );
+	dist = DotProduct( tr.viewParms.orient.axis[0], location ) - c;
 
 	if ( dist <= 0 )
 		return 0;
@@ -373,7 +373,7 @@ void R_AddMD3Surfaces( trRefEntity_t *ent ) {
 			&& r_shadows->integer == 2 
 			&& fogNum == 0
 			&& !(ent->e.renderfx & ( RF_NOSHADOW | RF_DEPTHHACK ) ) 
-			&& shader->sort == SS_OPAQUE ) {
+			&& static_cast<int>(shader->sort) == SS_OPAQUE ) {
 			R_AddDrawSurf( (surfaceType_t*) (void *)surface, tr.shadowShader, 0, qfalse );
 		}
 
@@ -381,7 +381,7 @@ void R_AddMD3Surfaces( trRefEntity_t *ent ) {
 		if ( r_shadows->integer == 3
 			&& fogNum == 0
 			&& (ent->e.renderfx & RF_SHADOW_PLANE )
-			&& shader->sort == SS_OPAQUE ) {
+			&& static_cast<int>(shader->sort) == SS_OPAQUE ) {
 			R_AddDrawSurf((surfaceType_t*) (void *)surface, tr.projectionShadowShader, 0, qfalse);
 		}
 
